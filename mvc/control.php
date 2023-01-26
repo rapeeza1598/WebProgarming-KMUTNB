@@ -1,3 +1,10 @@
+<script>
+    function goto(url){
+        setInterval(()=>{
+            windows.location.href = url;
+        },2000)
+    }
+</script>
 <pre>
 <?php
 include_once './model/class.book.php';
@@ -13,9 +20,16 @@ if (isset($show)) {
         $book_val[] = $_POST["Qty"];
         print_r($book_val);
         $book_ctrl->add_NewBook($book_val);
-    } else {
+        echo "<script>goto('view.php')</script>";
+    }
+    else if(isset($_GET['id'])){
+        $book_ctrl->removeBook($_GET['id']);
+        echo "<script>goto('view.php')</script>";
+    }
+    else {
         echo "Error Permission Denied";
     }
 }
+$book_ctrl -> db_close();
 ?>
 </pre>
