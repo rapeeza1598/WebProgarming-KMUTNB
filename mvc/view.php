@@ -28,15 +28,14 @@
             <th>วันที่แก้ไขข้อมูลหนังสือ</th>
             <th>Operation</th>
         </tr>
-    <?php
-    foreach ($book_data as $book) {
-        foreach($book as $col){
-            echo "<td>{$col}</td>";
+        <?php
+        foreach ($book_data as $book) {
+            foreach ($book as $col) {
+                echo "<td>{$col}</td>";
+            }
+            echo "<td><a href = 'control.php?id={book['ISBN']}'>Edit</a> | <a href = 'control.php?id={book['ISBN']}'>Del</a></td></tr>";
         }
-        echo "<td><a href = ''>Edit</a> | <a href = ''>Del</a></td>";
-        echo "</tr>";
-    }
-    ?>
+        ?>
     </table>
     <div>
         <form action="./control.php" method="post">
