@@ -20,7 +20,7 @@ class book
         }
     }
 
-    private function db_close()
+    public function db_close()
     {
         $this->db = null;
     }
@@ -50,5 +50,12 @@ class book
         $sql = "SELECT * FROM book order by ISBN desc";
         $res = $this->db->query($sql);
         return $res->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function removeBook($id)
+    {
+        $sql = "DELETE FROM book WHERE `ISBN` = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($id);
     }
 }
