@@ -58,4 +58,11 @@ class book
         $stmt = $this->db->prepare($sql);
         $stmt->execute($id);
     }
+
+    public function getBookbyID($id)
+    {
+        $sql = "SELECT * FROM book WHERE `ISBN` = ?";
+        $res = $this->db->query($sql);
+        return $res->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

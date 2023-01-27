@@ -37,7 +37,9 @@
         }
         ?>
     </table>
-    <?php if(isset($_GET["update"])){ ?>
+    <?php if(isset($_GET["update"])){ 
+            
+    ?>
     <div>
         <form action="./control.php" method="post">
             <h3>รหัสหนังสือ</h3>

@@ -1,8 +1,8 @@
 <script>
-    function goto(url){
-        setInterval(()=>{
+    function goto(url) {
+        setInterval(() => {
             windows.location.href = url;
-        },2000)
+        }, 2000)
     }
 </script>
 <pre>
@@ -21,15 +21,16 @@ if (isset($show)) {
         print_r($book_val);
         $book_ctrl->add_NewBook($book_val);
         echo "<script>goto('view.php')</script>";
-    }
-    else if(isset($_GET['id'])){
+    } else if (isset($_GET['id'])) {
         $book_ctrl->removeBook($_GET['id']);
         echo "<script>goto('view.php')</script>";
-    }
-    else {
+    } else {
         echo "Error Permission Denied";
     }
 }
-$book_ctrl -> db_close();
+if (isset($_GET['updateid'])) {
+    $book_data = $book_ctrl->getBookbyID($_GET['updateid']);
+}
+$book_ctrl->db_close();
 ?>
 </pre>
