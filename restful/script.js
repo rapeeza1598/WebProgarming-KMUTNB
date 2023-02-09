@@ -27,7 +27,7 @@ async function exec_opt() {
     let d2 = document.getElementById("txt2").value
     let getmethod = document
         .querySelector('input[name="opt1"]:checked')
-        .value.toUpperCase()
+        .value
     let url = "http://localhost:3000/restful/phpget.php"
     try {
         const response = await fetch(url, {
@@ -35,13 +35,13 @@ async function exec_opt() {
             headers: { "Content-Type": "application/json" },
         })
         if (!response.ok) {
-            const message = "Error with Status code {response.status}"
+            const message = `Error with Status code ${response.status}`
             throw new Error(message)
         }
         const data = await response.text()
         document.getElementById("div1").innerHTML = `<strong>${data}</strong>`
         console.log(data)
     } catch (error) {
-        console.log(error)
+        console.log(`Error : ${error}`)
     }
 }

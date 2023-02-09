@@ -8,23 +8,19 @@ $method = $_SERVER["REQUEST_METHOD"];
 switch($method){
     case 'POST':
         // $data = $_POST;
-        echo "POST";
+        echo $_SERVER["REQUEST_METHOD"];
         break;
     case 'GET':
         // $data = $_GET;
-        echo "GET";
+        echo $_SERVER["REQUEST_METHOD"];
         break;
     case 'PUT':
         // $data = $_PUT;
-        echo "PUT";
+        echo $_SERVER["REQUEST_METHOD"];
         break;
     case 'DELETE':
         // $data = $_DELETE;
-        echo "DELETE";
-        break;
-    case 'NEW':
-        // $data = $_NEW;
-        echo "NEW";
+        echo $_SERVER["REQUEST_METHOD"];
         break;
     default:
         echo "not support {$method} now";
