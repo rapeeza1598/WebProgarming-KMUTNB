@@ -1,5 +1,5 @@
 <?php
-include_once './db.php';
+include_once 'db.php';
 class book extends db{
     public function get_book(){
         $sql = "SELECT * FROM book";
