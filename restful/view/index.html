@@ -1,20 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body onload="getAllData()">
+        <div hidden id="spinner"></div>
+        <div id="showOutput"></div>
+        <button id="myBtn">++เพิ่มหนังสือ</button>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="close">&times;</span>
+                    <h2>เพิ่มหนังสือ</h2>
+                </div>
+                <div class="modal-body">
+                    <p>รหัสหนังสือ</p>
+                    <input type="text" name="" id="isbn" required/>
+                    <p>ชื่อหนังสือ</p><input
+                    type="text"
+                    name=""
+                    id="bookname"
+                    required
+                />
+                <p>ประเภทหนังสือ</p><input type="text" name="" id="booktype" required/>
+                <p>ชื่อผู้แต่ง</p><input type="text" name="" id="author" required />
+                <p>ราคาจำหน่าย</p><input type="text" name="" id="price" required /><br><br>
+                <button onclick="addBook()">เพิ่มหนังสือ</button>
+                </div>
+                <!-- <div class="modal-footer">
+                    <h3>Modal Footer</h3>
+                </div> -->
+            </div>
+        </div>
+        <div id="Modal-update" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span id="close_update" class="close">&times;</span>
+                    <h2>แก้ใขหนังสือ</h2>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="" id="bookid_update" value="" />
+                    <p>รหัสหนังสือ</p>
+                    <input type="text" name="" id="isbn_update" required/>
+                    <p>ชื่อหนังสือ</p><input
+                    type="text"
+                    name=""
+                    id="bookname_update"
+                    required
+                />
+                <p>ประเภทหนังสือ</p><input type="text" name="" id="booktype_update" required/>
+                <p>ชื่อผู้แต่ง</p><input type="text" name="" id="author_update" required />
+                <p>ราคาจำหน่าย</p><input type="text" name="" id="price_update" required /><br><br>
+                <button onclick="updateData()">แก้ใขหนังสือ</button>
+                </div>
+                <!-- <div class="modal-footer">
+                    <h3>Modal Footer</h3>
+                </div> -->
+            </div>
+        </div>
+    </body>
     <script src="./script.js"></script>
-    <div style="width: 190px; display: block;">
-        รหัสหนังสือ<input type="text" name="" id="isbn">
-        ชื่อหนังสือ<input type="text" name="" id="bookname">
-        ประเภทหนังสือ<input type="text" name="" id="booktype">
-        ชื่อผู้แต่ง<input type="text" name="" id="author">
-        ราคาจำหน่าย<input type="text" name="" id="price">
-        <button onclick="exec_ins()">เพิ่มหนังสือ</button>
-    </div>
-</body>
 </html>

@@ -22,5 +22,5 @@ class Db {
 }
 
 // $db = new Db();
-echo "<script>console.log('db.php')</script>";
+// echo "<script>console.log('db.php')</script>";
 ?>
