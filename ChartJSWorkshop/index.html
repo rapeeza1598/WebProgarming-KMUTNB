@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chart JS</title>
+    <style>
+      .container {
+        width: 500px;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      /* class center */
+      .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .center {
+        display: flex;
+        justify-content: center;
+        /* align-items: center; */
+      }
+
+      select,
+      option {
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="center">
+      <div class="container">
+        <canvas id="myChart"></canvas>
+        <canvas id="myChart2"></canvas>
+        <select name="status" id="status"></select>
+        <br />
+        <a href="station.html">Station</a>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      let value = 0;
+      let stationName = "";
+      let stationCurrent = 0;
+      let colorLine = "rgba(127, 255, 0, 1)";
+      fetchStations();
+
+      function fetchStation(id) {
+        fetch(
+          `http://localhost:3000/ChartJSWorkshop/controllers/controller.record.php?stationid=${id}`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data) {
+              let option = document.createElement("option");
+              let status = document.getElementById("status");
+              option.value = 0;
+              option.innerHTML = "No Station";
+              status.innerHTML(option);
+              value = "No Station";
+              stationName = "";
+              ScaleData = [0, 350 - value];
+              myChart.data.datasets[1].data = ScaleData;
+              myChart.update();
+              return;
+            }
+            if (data.pm > 50 && data.pm < 100) {
+              colorLine = "rgba(255,255, 0, 1)";
+            } else if (data.pm > 100 && data.pm < 150) {
+              colorLine = "rgba(255, 127, 0, 1)";
+            } else if (data.pm > 150 && data.pm < 200) {
+              colorLine = "rgba(255, 0, 0, 1)";
+            } else if (data.pm > 200 && data.pm < 300) {
+              colorLine = "rgba(127, 0, 255, 1)";
+            } else if (data.pm > 300) {
+              colorLine = "rgba(122, 64, 105, 1)";
+            } else {
+              colorLine = "rgba(127, 255, 0, 1)";
+            }
+            value = data.pm;
+            stationName = data.sensor_name;
+            ScaleData = [value, 350 - value];
+            myChart.data.datasets[1].data = ScaleData;
+            myChart.data.datasets[1].backgroundColor[0] = colorLine
+            myChart.update();
+            myChart2.data.datasets[1].data = ScaleData;
+            myChart2.data.datasets[1].backgroundColor[0] = colorLine
+            myChart2.update();
+          });
+      }
+
+      function fetchStations() {
+        fetch(
+          "http://localhost:3000/ChartJSWorkshop/controllers/controller.station.php"
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            let status = document.getElementById("status");
+            if (data.length === 0) {
+              let option = document.createElement("option");
+              option.value = 0;
+              option.innerHTML = "No Station";
+              status.appendChild(option);
+              value = "No Station";
+              stationName = "";
+              ScaleData = [0, 350 - value];
+              myChart.data.datasets[1].data = ScaleData;
+              myChart.update();
+              myChart2.data.datasets[1].data = ScaleData;
+              myChart2.update();
+              return;
+            }
+            data.forEach((element) => {
+              let option = document.createElement("option");
+              option.value = element.location_id;
+              option.innerHTML = element.sensor_name;
+              status.appendChild(option);
+            });
+            stationCurrent = data[0].location_id;
+            fetchStation(data[0].location_id);
+          });
+      }
+      //status onchang
+      document.getElementById("status").addEventListener("change", (e) => {
+        fetchStation(e.target.value);
+        stationCurrent = e.target.value;
+      });
+
+      setInterval(() => {
+        fetchStation(stationCurrent);
+      }, 2000);
+    </script>
+
+    <script>
+      const ctx = document.getElementById("myChart");
+      const ctx2 = document.getElementById("myChart2")
+      const counter = {
+        id: "counter",
+        beforeDraw(chart, args, options) {
+          const {
+            ctx,
+            chartArea: { top, right, buttom, left, width, height },
+          } = chart;
+          ctx.save();
+          ctx.font = options.fontSize + "px " + options.fontFamily;
+          // ctx.fillStyle = "lightgreen";
+          ctx.fillStyle = colorLine;
+          ctx.textAlign = "center";
+          ctx.fillText(`${value} AQI`, width / 2 + 13, top + height / 2);
+          ctx.font = 23 + "px " + options.fontFamily;
+          ctx.fillText(
+            `📍 ${stationName}`,
+            width / 2 + 13,
+            top + height / 2 + 70
+          );
+        },
+      };
+      let Scale = [50, 50, 50, 50, 50, 50];
+
+      let ScaleData = [value, 350 - value];
+      let Labels = [
+        "Good",
+        "Moderate",
+        "Unhealthy for Sensitive Groups",
+        "Unhealthy",
+        "Very Unhealthy",
+        "Hazardous",
+      ];
+
+      const ColorSystem = (a = 1, data = []) => {
+        const dynamicColors = function () {
+          var r = Math.floor(Math.random() * 255);
+          var g = Math.floor(Math.random() * 255);
+          var b = Math.floor(Math.random() * 255);
+          return "rgb(" + r + "," + g + "," + b + ")";
+        };
+        let Colors = [
+          `rgba(127, 255, 0, ${a})`,
+          `rgba(255,255, 0, ${a})`,
+          `rgba(255, 127, 0, ${a})`,
+          `rgba(255, 0, 0, ${a})`,
+          `rgba(127, 0, 255, ${a})`,
+          `rgba(122, 64, 105, ${a})`,
+        ];
+        if (data.length > Colors.length) {
+          let fullLength = data.length;
+          let overArray = fullLength - Colors.length;
+          for (let i = 0; i < overArray; i++) {
+            Colors.push(dynamicColors());
+          }
+        }
+        return Colors;
+      };
+
+      const myChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: Labels,
+          datasets: [
+            {
+              label: "Level",
+              data: Scale,
+              borderWidth: 1,
+              backgroundColor: ColorSystem(1, Scale),
+              cutout: "90%",
+            },
+            {
+              label: ["AQI", ""],
+              data: ScaleData,
+              borderWidth: 1,
+              backgroundColor: [`rgba(127, 255, 0, 1)`, `rgba(0, 0, 0, 0)`],
+              cutout: "85%",
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            counter: {
+              fontSize: "70",
+              fontFamily: "sans-serif",
+            },
+          },
+          circumference: 270,
+          rotation: 180 + 45,
+        },
+        plugins: [counter],
+      });
+      const myChart2 = new Chart(ctx2, {
+        type: "doughnut",
+        data: {
+          labels: Labels,
+          datasets: [
+            {
+              label: "Level",
+              data: Scale,
+              borderWidth: 1,
+              backgroundColor: ColorSystem(1, Scale),
+              cutout: "90%",
+            },
+            {
+              label: ["AQI", ""],
+              data: ScaleData,
+              borderWidth: 1,
+              backgroundColor: [`rgba(127, 255, 0, 1)`, `rgba(0, 0, 0, 0)`],
+              cutout: "85%",
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            counter: {
+              fontSize: "70",
+              fontFamily: "sans-serif",
+            },
+          },
+          circumference: 270,
+          rotation: 180 + 45,
+        },
+        plugins: [counter],
+      });
+    </script>
+  </body>
+</html>

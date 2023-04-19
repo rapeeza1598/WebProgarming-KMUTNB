@@ -1,0 +1,183 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SQLite</title>
+    </head>
+    <body>
+        <h1>SQLite</h1>
+        <div>
+            <input type="hidden" id="userid" />
+            <p>user:</p>
+            <input type="text" id="user" />
+            <p>pass:</p>
+            <input type="password" id="pass" />
+            <br />
+            <button onclick="addUser()">Submit</button>
+        </div>
+        <table border="1">
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>User</td>
+                    <td>Pass</td>
+                    <td>Update</td>
+                    <td>Delete</td>
+                </tr>
+            </thead>
+            <tbody id="tuser"></tbody>
+        </table>
+
+        <script src="./sqlite3.js"></script>
+        <script>
+            const db = initDb()
+
+            function initDb() {
+                window.sqlite3InitModule().then(function (sqlite3) {
+                    const db = new sqlite3.oo1.JsStorageDb("local")
+
+                    try {
+                        db.exec([
+                            "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT NOT NULL, pass TEXT NOT NULL);",
+                            // "INSERT INTO users(user, pass) VALUES('rapee','qwer')",
+                        ])
+
+                        db.exec({
+                            sql: "SELECT * FROM users",
+                            rowMode: "object",
+                            callback: function (row) {
+                                createTr(row)
+                                console.log(row)
+                            },
+                        })
+                    } catch (error) {
+                        console.log(error)
+                    } finally {
+                        return db
+                    }
+                })
+            }
+
+            function createTr(row) {
+                const tr = document.createElement("tr")
+                const tdId = document.createElement("td")
+                const tdUser = document.createElement("td")
+                const tdPass = document.createElement("td")
+                const tdUpdate = document.createElement("td")
+                const tdDelete = document.createElement("td")
+                const btnUpdate = document.createElement("button")
+                const btnDelete = document.createElement("button")
+
+                tdId.innerHTML = row.id
+                tdUser.innerHTML = row.user
+                tdPass.innerHTML = row.pass
+
+                btnUpdate.innerHTML = "Update"
+                btnUpdate.onclick = function () {
+                    updateUser(row.id)
+                }
+
+                btnDelete.innerHTML = "Delete"
+                btnDelete.onclick = function () {
+                    deleteUser(row.id)
+                }
+
+                tdUpdate.appendChild(btnUpdate)
+                tdDelete.appendChild(btnDelete)
+
+                tr.appendChild(tdId)
+                tr.appendChild(tdUser)
+                tr.appendChild(tdPass)
+                tr.appendChild(tdUpdate)
+                tr.appendChild(tdDelete)
+
+                document.getElementById("tuser").appendChild(tr)
+            }
+
+            function addUser() {
+                const user = document.getElementById("user").value
+                const pass = document.getElementById("pass").value
+
+                db.exec({
+                    sql: `INSERT INTO users(user, pass) VALUES('${user}','${pass}')`,
+                })
+
+                const trs = document
+                    .getElementById("tuser")
+                    .getElementsByTagName("tr")
+
+                for (let i = trs.length - 1; i >= 0; i--) {
+                    trs[i].remove()
+                }
+
+                db.exec({
+                    sql: "SELECT * FROM users",
+                    rowMode: "object",
+                    callback: function (row) {
+                        createTr(row)
+                        console.log(row)
+                    },
+                })
+
+                document.getElementById("user").value = ""
+                document.getElementById("pass").value = ""
+            }
+
+            function update_user(id) {
+                let user = document.getElementById("user").value
+                let pass = document.getElementById("pass").value
+
+                db.exec({
+                    sql: `update users set user='${user}', pass='${pass}' where id=${id}`,
+                })
+
+                db.exec({
+                    sql: "select * from users",
+                    rowMode: "object",
+                    callback: function (row) {
+                        console.log(row)
+                    },
+                })
+
+                let tr = document
+                    .getElementById("tuser")
+                    .getElementsByTagName("tr")
+
+                for (let i = 0; i < tr.length; i++) {
+                    if (tr[i].getElementsByTagName("td")[0].innerHTML == id) {
+                        tr[i].getElementsByTagName("td")[1].innerHTML = user
+                        tr[i].getElementsByTagName("td")[2].innerHTML = pass
+                    }
+                }
+
+                document.getElementById("user").value = ""
+                document.getElementById("pass").value = ""
+            }
+
+            function delete_user(id) {
+                db.exec({
+                    sql: `delete from users where id=${id}`,
+                })
+
+                db.exec({
+                    sql: "select * from users",
+                    rowMode: "object",
+                    callback: function (row) {
+                        console.log(row)
+                    },
+                })
+
+                let tr = document
+                    .getElementById("tuser")
+                    .getElementsByTagName("tr")
+
+                for (let i = 0; i < tr.length; i++) {
+                    if (tr[i].getElementsByTagName("td")[0].innerHTML == id) {
+                        tr[i].remove()
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>

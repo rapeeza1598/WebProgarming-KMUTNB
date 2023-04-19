@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Station</title>
+    </head>
+    <body>
+        <h1>Station Status</h1>
+        <label for="station">Station</label><br />
+        <select name="station" id="station"></select>
+        <input type="text" name="" id="valueStation" />
+        <br />
+        <div>
+            <p>
+                <input type="radio" name="status" value="1" /> On
+                <input type="radio" name="status" value="0" /> Off
+            </p>
+            <button id="submit">Submit</button>
+            <a href="index.html">Back</a>
+        </div>
+    </body>
+
+    <script>
+        fetchStations()
+        function fetchStations() {
+            fetch(
+                "http://localhost:3000/ChartJSWorkshop/controllers/controller.station.php?admin"
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    let station = document.getElementById("station")
+                    data.forEach((element) => {
+                        let option = document.createElement("option")
+                        option.value = element.location_id
+                        option.innerHTML = element.sensor_name
+                        station.appendChild(option)
+                    })
+                    fetchStation(data[0].location_id)
+                })
+        }
+
+        //station onchange
+        document.getElementById("station").addEventListener("change", (e) => {
+            let stationId = e.target.value
+            fetchStation(stationId)
+        })
+
+        function fetchStation(id) {
+            fetch(
+                `http://localhost:3000/ChartJSWorkshop/controllers/controller.record.php?stationid=${id}`
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    let status = document.getElementsByName("status")
+                    if (data.status == 1) {
+                        status[0].checked = true
+                    } else {
+                        status[1].checked = true
+                    }
+                })
+        }
+
+        //submit
+        document.getElementById("submit").addEventListener("click", (e) => {
+            let station = document.getElementById("station")
+            let status = document.getElementsByName("status")
+            let stationValue = document.getElementById("valueStation").value;
+            let stationId = station.value
+            let statusValue = 0
+            if (status[0].checked) {
+                statusValue = 1
+            }
+            fetch(
+                `http://localhost:3000/ChartJSWorkshop/controllers/controller.station.php`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        stationid: stationId,
+                        status: statusValue,
+                        value: stationValue,
+                    }),
+                }
+            )
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data)
+                })
+        })
+    </script>
+</html>

@@ -1,0 +1,73 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <div style="display: block; padding: 20px; width: 100px">
+            Product:<select name="" id="product" onchange="show_price()">
+                <option value='{"name":"p1","price":10}'>p1</option>
+                <option value='{"name":"p2","price":15}'>p2</option>
+                <option value='{"name":"p3","price":20}'>p3</option>
+                <option value='{"name":"p4","price":25}'>p4</option>
+            </select>
+            Price:<input
+                type="text"
+                name=""
+                id="price"
+                readonly
+                required
+                style="width: 50px"
+            />
+            Quantity:<input
+                type="number"
+                name=""
+                id="qty"
+                min="5"
+                max="10"
+                required
+            />
+            <button onclick="add_item()">Add to Cart</button>
+        </div>
+    </body>
+    <script>
+        function add_item() {
+            var qty = document.getElementById("qty")
+            var price = document.getElementById("price").value
+            var product = JSON.parse(document.getElementById("product").value)
+            if (price != "") {
+                if (qty.validity.rangeOverflow || qty.validity.rangeUnderflow) {
+                    alert("Quantity must be between 5 and 10")
+                } else {
+                    var cart = localStorage.getItem("Cart")
+                    if (!cart) {
+                        cart = []
+                    }
+                    else{
+                        cart = JSON.parse(cart)
+                    }
+                    var item = [
+                        {
+                            name: product.name,
+                            price: product.price,
+                            qty: qty.value,
+                        },
+                    ]
+                    cart.push(item)
+                    localStorage.setItem("Cart", JSON.stringify(cart))
+                }
+            } else {
+                alert("Please select a product")
+            }
+        }
+        function show_price() {
+            var product = JSON.parse(document.getElementById("product").value)
+            document.getElementById("price").value = product.price
+        }
+        function clear_item(){
+            localStorage.removeItem("Cart")
+        }
+    </script>
+</html>

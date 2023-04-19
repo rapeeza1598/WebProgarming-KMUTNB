@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chart JS</title>
+        <style>
+            .container {
+                width: 500px;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+        </style>
+    </head>
+    <body onload="getdata()">
+        <div class="container">
+            <canvas id="myChart"></canvas>
+            <!-- <button onclick="AddData()">+ Add Data</button> -->
+            <select name="status" id="status">
+                <option value="1">Status A1</option>
+            </select>
+            <br />
+            <button onclick="get_data_station()">add</button>
+            <a href="station.html">Station</a>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            const ctx = document.getElementById("myChart")
+            var value = 20
+            const counter = {
+                id: "counter",
+                beforeDraw(chart, args, options) {
+                    const {
+                        ctx,
+                        chartArea: { top, right, buttom, left, width, height },
+                    } = chart
+                    ctx.save()
+                    ctx.font = options.fontSize + "px " + options.fontFamily
+                    ctx.fillStyle = "lightgreen"
+                    ctx.textAlign = "center"
+                    ctx.fillText(
+                        `${value} AQI`,
+                        width / 2 + 13,
+                        top + height / 2
+                    )
+                },
+            }
+            let Scale = [50, 50, 50, 50, 100, 50]
+
+            let ScaleData = [value, 350 - value]
+            let Labels = [
+                "Good",
+                "Moderate",
+                "Unhealthy for Sensitive Groups",
+                "Unhealthy",
+                "Very Unhealthy",
+                "Hazardous",
+            ]
+
+            const ColorSystem = (a = 1, data = []) => {
+                const dynamicColors = function () {
+                    var r = Math.floor(Math.random() * 255)
+                    var g = Math.floor(Math.random() * 255)
+                    var b = Math.floor(Math.random() * 255)
+                    return "rgb(" + r + "," + g + "," + b + ")"
+                }
+                let Colors = [
+                    `#7FFF00`,
+                    `#E6E600`,
+                    `#FF6600`,
+                    `#FF0000`,
+                    `#7F00FF`,
+                    `#89001A`,
+                ]
+                if (data.length > Colors.length) {
+                    let fullLength = data.length
+                    let overArray = fullLength - Colors.length
+                    for (let i = 0; i < overArray; i++) {
+                        Colors.push(dynamicColors())
+                    }
+                }
+                return Colors
+            }
+
+            const myChart = new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    labels: Labels,
+                    datasets: [
+                        {
+                            label: "Level",
+                            data: Scale,
+                            borderWidth: 1,
+                            backgroundColor: ColorSystem(1, Scale),
+                            cutout: "90%",
+                        },
+                        {
+                            label: ["AQI", ""],
+                            data: ScaleData,
+                            borderWidth: 1,
+                            backgroundColor: [
+                                `rgba(127, 255, 0, 1)`,
+                                `rgba(0, 0, 0, 0)`,
+                            ],
+                            cutout: "85%",
+                        },
+                    ],
+                },
+                options: {
+                    plugins: {
+                        counter: {
+                            fontSize: "70",
+                            fontFamily: "sans-serif",
+                        },
+                    },
+                    circumference: 270,
+                    rotation: 180 + 45,
+                },
+                plugins: [counter],
+            })
+
+            const AddData = () => {
+                Scale.push(Math.floor(Math.random() * 20))
+                Labels.push(`New Label ${Labels.length + 1}`)
+                console.log(Data)
+                myChart.update()
+            }
+            
+            function addvar() {
+                value = 350
+                ScaleData = [value, 350 - value]
+                myChart.data.datasets[1].data = ScaleData
+                myChart.data.datasets[1].backgroundColor[0] = setColor(value)
+                myChart.update()
+            }
+            function setColor(valueColor){
+                let Colors = [
+                    `rgba(127,255,0,1.000)`,
+                    `rgba(230,230,0,1.000)`,
+                    `rgba(255,102,0,1.000)`,
+                    `rgba(255,0,0,1.000)`,
+                    `rgba(127,0,255,1.000)`,
+                    `rgba(137,0,26,1.000)`,
+                ]
+
+            }
+            setInterval(function () {
+                value = Math.floor(Math.random() * (350 - 0 + 1)) + 0
+                ScaleData = [value, 350 - value]
+                myChart.data.datasets[1].data = ScaleData
+                myChart.data.datasets[1].backgroundColor[0] = setColor(value)
+                myChart.update()
+            }, 2000)
+            function get_data_station() {
+                const API_URL = "http://localhost:3000/AQI_Gauge/sensor.php"
+                let requestOptions = {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                }
+                fetch(API_URL + "?stationid=1", requestOptions)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data)
+                    })
+            }
+        </script>
+    </body>
+</html>

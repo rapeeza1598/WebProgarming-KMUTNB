@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Station</title>
+    <style>
+      select,
+      option {
+        padding: 1rem;
+      }
+      body {
+        /* ไล่เฉดสี เขียวอ่อนไปขาวบนลงล่าง ทั้งจอ   */
+        height: 100vh;
+        background: linear-gradient(180deg, #d7f7d7 0%, #ffffff 100%);
+      }
+    </style>
+  </head>
+  <body>
+    <center>
+      <h1>Station Status</h1>
+      <label for="station">Station</label><br />
+      <select name="station" id="station"></select
+      ><br />
+      <label for="pm">PM</label><br />
+      <input type="number" name="pm" id="pm" required />
+      <div>
+        <p>
+          <input type="radio" name="status" value="1" /> On
+          <input type="radio" name="status" value="0" /> Off
+        </p>
+        <button id="submit">Submit</button><br /><br />
+        <a href="index.html">Back</a>
+      </div>
+    </center>
+  </body>
+
+  <script>
+    fetchStations();
+    function fetchStations() {
+      fetch(
+        "./controllers/controller.station.php?admin"
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          let station = document.getElementById("station");
+          data.forEach((element) => {
+            let option = document.createElement("option");
+            option.value = element.location_id;
+            option.innerHTML = element.sensor_name;
+            station.appendChild(option);
+          });
+          fetchStation(data[0].location_id);
+        });
+    }
+
+    //station onchange
+    document.getElementById("station").addEventListener("change", (e) => {
+      let stationId = e.target.value;
+      fetchStation(stationId);
+    });
+
+    function fetchStation(id) {
+      fetch(
+        `./controllers/controller.record.php?stationid=${id}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          let status = document.getElementsByName("status");
+          let pm = document.getElementById("pm");
+          if (data.status == 1) {
+            status[0].checked = true;
+          } else {
+            status[1].checked = true;
+          }
+          pm.value = data.pm;
+        });
+    }
+
+    //submit
+    document.getElementById("submit").addEventListener("click", (e) => {
+      let station = document.getElementById("station");
+      let status = document.getElementsByName("status");
+      let stationId = station.value;
+      let statusValue = 0;
+      if (status[0].checked) {
+        statusValue = 1;
+      }
+      fetch(
+        `./controllers/controller.station.php`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            stationid: stationId,
+            pm: document.getElementById("pm").value,
+            status: statusValue,
+          }),
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+        });
+    });
+  </script>
+</html>

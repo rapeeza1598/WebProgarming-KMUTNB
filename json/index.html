@@ -1,0 +1,147 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Json</title>
+    </head>
+    <body onload="getYear()">
+        <h1>Movie JSON</h1>
+        <select
+            name="movieYear"
+            id="movieYear"
+            onchange="getMoviesBySelectYear()"
+        >
+            <option value="selectMovieYear" selected disabled>
+                selectMovieYear
+            </option>
+        </select>
+        <select
+            name="movieName"
+            id="movieName"
+            onchange="getMoviesBySelectName()"
+        >
+            <option value="selectMovieName" selected disabled>
+                selectMovieName
+            </option>
+        </select>
+        <br />
+        <input type="text" id="title" placeholder="Title" disabled /><br />
+        <textarea name="" id="cast" cols="30" rows="10" disabled></textarea
+        ><br />
+        <input type="text" id="genres" placeholder="Genres" disabled />
+    </body>
+    <script>
+        var resultJson
+        const myJson = "./movies.json"
+
+        // this.addEventListener("movieYear")
+        function getMovies() {
+            fetch(myJson)
+                .then((res) => res.json())
+                .then((out) => {
+                    console.log()
+                    for (let index = 0; index < 100; index++) {
+                        document.getElementById("movieName").innerHTML += `
+                            <option value='${out[index].title}'>${out[index].title}</option>`
+                    }
+                })
+                .catch((err) => console.error(err))
+        }
+        function getYear() {
+            fetch(myJson)
+                .then((res) => res.json())
+                .then((out) => {
+                    resultJson = out
+                    let addHtml = ""
+                    let year = []
+                    for (let index = 0; index < out.length; index++) {
+                        year.push(out[index].year)
+                    }
+                    year = eliminateDuplicates(year)
+                    for (let index = 0; index < year.length; index++) {
+                        addHtml += `
+                            <option value='${year[index]}'>${year[index]}</option>`
+                    }
+                    document.getElementById("movieYear").innerHTML += addHtml
+                })
+                .catch((err) => console.error(err))
+        }
+        function eliminateDuplicates(arr) {
+            var i,
+                len = arr.length,
+                out = [],
+                obj = {}
+
+            for (i = 0; i < len; i++) {
+                obj[arr[i]] = 0
+            }
+            for (i in obj) {
+                out.push(i)
+            }
+            return out
+        }
+        function test() {
+            // console.log(document.getElementById("movieYear").value)
+            console.log(
+                resultJson[document.getElementById("movieYear").value].title
+            )
+            let indexJson = document.getElementById("movieYear").value
+            document.getElementById("title").value =
+                resultJson[document.getElementById("movieYear").value].title
+            document.getElementById("cast").value =
+                resultJson[document.getElementById("movieYear").value].cast
+            document.getElementById("genres").value =
+                resultJson[document.getElementById("movieYear").value].genres
+        }
+        function getMoviesBySelectYear() {
+            let year = Number(document.getElementById("movieYear").value)
+            let addMovieName = `<option value="selectMovieName" selected disabled>
+                                    selectMovieName
+                                </option>`
+            fetch(myJson)
+                .then((res) => res.json())
+                .then((out) => {
+                    // console.log(typeof(out[0].year))
+                    // console.log(typeof(year));
+                    console.log(year)
+                    for (let index = 0; index < out.length; index++) {
+                        // console.log(out[index].year === year);
+                        if (out[index].year == year) {
+                            // console.log(index)
+                            addMovieName += `
+                            <option value='${out[index].title}'>${out[index].title}</option>`
+                        }
+                    }
+                    document.getElementById("movieName").innerHTML =
+                        addMovieName
+                })
+                .catch((err) => console.error(err))
+        }
+        function getMoviesBySelectName() {
+            let name = document.getElementById("movieName").value
+            let addMovieName = `<option value="selectMovieName" selected disabled>
+                                    selectMovieName
+                                </option>`
+            fetch(myJson)
+                .then((res) => res.json())
+                .then((out) => {
+                    // console.log(typeof(out[0].year))
+                    // console.log(typeof(year));
+                    console.log(name)
+                    for (let index = 0; index < out.length; index++) {
+                        // console.log(out[index].year === year);
+                        if (out[index].title == name) {
+                            let indexJson =
+                                document.getElementById("movieYear").value
+                            document.getElementById("title").value =  out[index].year +' | '+ out[index].title
+                            document.getElementById("cast").value = out[index].cast
+                            document.getElementById("genres").value = out[index].genres
+                            break
+                        }
+                    }
+                })
+                .catch((err) => console.error(err))
+        }
+    </script>
+</html>

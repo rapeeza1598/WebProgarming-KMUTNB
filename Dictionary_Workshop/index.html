@@ -1,11 +1,141 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        .tdhi {
+            height: 200px;
+            text-align: center;
+            background-color: rgb(75, 235, 75);
+        }
+        .trcen1 {
+            text-align: center;
+            border: 10px;
+        }
+        .trcen {
+            text-align: center;
+        }
+        .trw {
+            width: 30%;
+        }
+    </style>
+    <body onload="getAllData()">
+        <div id="table-data">
+            <!-- <table style="width: 100%" border="1">
+                <thead>
+                    <tr>
+                        <td colspan="5" class="tdhi"><h1>Dictionary</h1></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <button id="myBtn" onclick="">+vocab</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <input type="text"> <button>ค้นหา</button>
+                        </td>
+                    </tr>
+            </thead> -->
+        </div>
+        <!-- <table style="width: 100%" border="1">
+            <thead>
+                <tr>
+                    <td colspan="5" class="tdhi"><h1>Dictionary</h1></td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        <button id="myBtn" onclick="">+vocab</button>
+                    </td>
+                </tr>
+                <tr>
+                    <input type="text"> <button>ค้นหา</button>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="trcen">ID</td>
+                    <td class="trcen">VOCAB</td>
+                    <td class="trcen">TYPE</td>
+                    <td class="trcen" colspan="2">MEAN</td>
+                </tr>
+                <tr>
+                    <td class="trcen">1</td>
+                    <td class="trcen">Hello</td>
+                    <td class="trcen">Noun</td>
+                    <td class="trw">weigweoigj</td>
+                    <td><button>Edit</button></td>
+                </tr>
+            </tbody>
+        </table> -->
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="close">&times;</span>
+                    <h2>เพิ่มหนังสือ</h2>
+                </div>
+                <div class="modal-body">
+                    <table>
+                        <tr style="text-align: center">
+                            <td colspan="3"><h2>Dictionary</h2></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">Inswrt Word</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                Vocab: <input type="text" name="" id="vocab" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                Type:
+                                <select name="" id="type" required>
+                                    <option value="">Select</option>
+                                    <option value="Noun">Noun</option>
+                                    <option value="Verb">Verb</option>
+                                    <option value="Adjective">Adjective</option>
+                                    <option value="Adverb">Adverb</option>
+                                    <option value="Preposition">
+                                        Preposition
+                                    </option>
+                                    <option value="Conjunction">
+                                        Conjunction
+                                    </option>
+                                    <option value="Interjection">
+                                        Interjection
+                                    </option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <textarea
+                                    name=""
+                                    id="mean"
+                                    cols="30"
+                                    rows="10"
+                                ></textarea>
+                            </td>
+                        </tr>
+                        <tr></tr>
+                        <tr>
+                            <td><button type="submit">ส่ง</button></td>
+                            <td><button type="reset">reset</button></td>
+                            <td><button onclick="backToMain()">back to main</button></td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- <div class="modal-footer">
+                    <h3>Modal Footer</h3>
+                </div> -->
+            </div>
+        </div>
+    </body>
+    <script src="./script.js"></script>
 </html>

@@ -1,0 +1,161 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SQLite</title>
+    </head>
+    <script src="./sqlite3.js""></script>
+    <body>
+        <h1>SQLite</h1>
+        <div>
+            <input type="hidden" name="" id="userid" />
+            <p>user:</p>
+            <input type="text" id="user" />
+            <p>pass:</p>
+            <input type="password" name="" id="pass" /><br /><button
+                onclick="add_user()"
+            >
+                Submit
+            </button>
+        </div>
+
+        <table border="1">
+            <thead>
+                <tr>
+                    <td id="id">ID</td>
+                    <td>User</td>
+                    <td>Pass</td>
+                    <td>Update</td>
+                    <td>Delete</td>
+                </tr>
+            </thead>
+            <tbody id="tuser">
+
+            </tbody>
+        </table>
+    </body>
+    <script>
+        var db = initdb()
+        function initdb() {
+            window.sqlite3InitModule().then(function (sqlite3) {
+                // console.log("SQLite",sqlite3)
+                // console.log(sqlite3.version.libVersion)
+                // console.log("init sqlite success")
+                db = new sqlite3.oo1.JsStorageDb("local")
+                try {
+                    db.exec([
+                        "create table if not exists users(id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT NOT NULL, pass TEXT NOT NULL);",
+                        // "insert into users(user, pass) values('rapee','qwer')",
+                    ])
+                    db.exec({
+                        sql: "select * from users",
+                        rowMode: "object",
+                        callback: function (row) {
+                            create_tr(row)
+                            console.log(row)
+                        },
+                    })
+                    // console.log("Table created successfully or already exists")
+                } catch (error) {
+                    console.log(error)
+                } finally {
+                    return db
+                }
+            })
+        }
+        function create_tr(row) {
+            let tr = document.createElement("tr")
+            let td_id = document.createElement("td")
+            let td_user = document.createElement("td")
+            let td_pass = document.createElement("td")
+            let td_update = document.createElement("td")
+            let td_delete = document.createElement("td")
+            let btn_update = document.createElement("button")
+            let btn_delete = document.createElement("button")
+            td_id.innerHTML = row.id
+            td_user.innerHTML = row.user
+            td_pass.innerHTML = row.pass
+            btn_update.innerHTML = "Update"
+            btn_delete.innerHTML = "Delete"
+            btn_update.onclick = function () {
+                update_user(row.id)
+            }
+            btn_delete.onclick = function () {
+                delete_user(row.id)
+            }
+            td_update.appendChild(btn_update)
+            td_delete.appendChild(btn_delete)
+            tr.appendChild(td_id)
+            tr.appendChild(td_user)
+            tr.appendChild(td_pass)
+            tr.appendChild(td_update)
+            tr.appendChild(td_delete)
+            document.getElementById("tuser").appendChild(tr)
+        }
+        function add_user() {
+            let user = document.getElementById("user").value
+            let pass = document.getElementById("pass").value
+            db.exec({
+                sql: `insert into users(user, pass) values('${user}','${pass}')`,
+            })
+            // remove all tr tag
+            let tr = document.getElementById("tuser").getElementsByTagName("tr")
+            for (let i = tr.length; i > 0; i--) {
+                tr[i - 1].remove()
+            }
+            // show data
+            db.exec({
+                sql: "select * from users",
+                rowMode: "object",
+                callback: function (row) {
+                    create_tr(row)
+                    console.log(row)
+                },
+            })
+            document.getElementById("user").value = ""
+            document.getElementById("pass").value = ""
+        }
+        function update_user(id) {
+            let user = document.getElementById("user").value
+            let pass = document.getElementById("pass").value
+            db.exec({
+                sql: `update users set user='${user}', pass='${pass}' where id=${id}`,
+            })
+            db.exec({
+                sql: "select * from users",
+                rowMode: "object",
+                callback: function (row) {
+                    console.log(row)
+                },
+            })
+            let tr = document.getElementById("tuser").getElementsByTagName("tr")
+            for (let i = 0; i < tr.length; i++) {
+                if (tr[i].getElementsByTagName("td")[0].innerHTML == id) {
+                    tr[i].getElementsByTagName("td")[1].innerHTML = user
+                    tr[i].getElementsByTagName("td")[2].innerHTML = pass
+                }
+            }
+            document.getElementById("user").value = ""
+            document.getElementById("pass").value = ""
+        }
+        function delete_user(id){
+            db.exec({
+                sql: `delete from users where id=${id}`,
+            })
+            db.exec({
+                sql: "select * from users",
+                rowMode: "object",
+                callback: function (row) {
+                    console.log(row)
+                },
+            })
+            let tr = document.getElementById("tuser").getElementsByTagName("tr")
+            for (let i = 0; i < tr.length; i++) {
+                if (tr[i].getElementsByTagName("td")[0].innerHTML == id) {
+                    tr[i].remove()
+                }
+            }
+        }
+    </script>
+</html>
